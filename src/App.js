@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const RENDER_API = 'https://task5-backend-api.onrender.com'
+
 const LANGUAGES = [
   { label: "English (US)", code: "en_US" },
   { label: "German (DE)", code: "de_DE" },
@@ -26,32 +28,23 @@ export default function App() {
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
 
-      console.log("Fetching books...");
-      console.log("Append mode:", append);
-      console.log("Offset before fetch:", offset);
-
-      const response = await axios.get("https://task5-backend-api.onrender.com/books", {
-        params: { seed, language, count: append ? 10 : 20, likes, reviews, offset: append ? offset : 0 },
+      const response = await axios.get(`${RENDER_API}/books`, {
+        params: { seed, language, count: append ? 10 : 20, likes, reviews, offset: append ? offset + 20 : 0 },
       });
 
-      console.log("Fetched books:", response.data.length);
-      console.log("Received books:", response.data);
 
       setBooks((prevBooks) => {
       const newBooks = append ? [...prevBooks, ...response.data] : response.data;
-      console.log("New books list length:", newBooks.length);
       return newBooks;
       });
 
     if (append) {
       setOffset((prevOffset) => {
         const newOffset = prevOffset + 10;
-        console.log("Updated offset after appending:", newOffset);
         return newOffset;
       });
     } else {
-      setOffset(20);  // Start from 20 after the initial load
-      console.log("Offset reset to 20 after initial load");
+      setOffset(0); 
     }
 
       setLoadingMore(false);
@@ -62,8 +55,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    console.log("Language or settings changed. Resetting books and offset.");
-    setBooks([]);
+    // setBooks([]);
     setOffset(0);
     fetchBooks(false); 
   }, [seed, language, likes, reviews]);
@@ -100,8 +92,15 @@ export default function App() {
   };
   
   return (
-    <div className="container p-4">
-      <div className='d-flex justify-content-evenly align-items-center mb-4'>
+    <div className="container">
+      <div className='d-flex justify-content-evenly align-items-center mb-4 sticky-top'   
+      style={{ 
+        backgroundColor: '#f8f9fa', 
+        zIndex: 1020, 
+        width: '100%', 
+        padding: '12px 0', 
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+      }}>
         <div className="form-floating" style={{ width: "200px" }}>
           <select 
             className="form-select"
@@ -164,8 +163,8 @@ export default function App() {
           <label htmlFor='reviewInput'>Reviews</label>
         </div>
       </div>
-      <table className='table '>
-        <thead>
+      <table className='table'>
+        <thead className='sticky-top' style={{ backgroundColor: '#f8f9fa', zIndex: 1010 }}>
           <tr>
             <th>#</th>
             <th>ISBN</th>
