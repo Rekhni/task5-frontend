@@ -30,7 +30,7 @@ export default function App() {
       console.log("Append mode:", append);
       console.log("Offset before fetch:", offset);
 
-      const response = await axios.get("http://localhost:5001/books", {
+      const response = await axios.get("https://task5-backend-api.onrender.com", {
         params: { seed, language, count: append ? 10 : 20, likes, reviews, offset: append ? offset : 0 },
       });
 
